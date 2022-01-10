@@ -1,96 +1,83 @@
 require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
-const SpotifyWebApi = require('spotify-web-api-node')
 const app = express()
+const mongoose = require('mongoose')
+const socket = require('socket.io')
 
+const User = require('./models/User.model')
+const Message = require('./models/Message.model')
+const Follow = require('./models/Room.model')
+
+const userRouter = require('./routes/user.route')
+const trackRouter = require('./routes/track.route')
+const playlistRouter = require('./routes/playlist.route')
+
+const mongoURL = 'mongodb://localhost:27017/soulify'
+
+try {
+    mongoose.connect(
+        mongoURL,
+        { useNewUrlParser: true, useUnifiedTopology: true }
+    )
+}catch {
+    console.log('failed')
+}
+
+
+
+const db = mongoose.connection
+db.on('error', console.error.bind(console, 'error:'))
+db.once('open', () => {})
+
+app.use(express())
 app.use(cors(
     { credentials: true }
 ))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
-const port = process.env.PORT || 5000
+app.use('/user', userRouter)
+app.use('/track', trackRouter)
+app.use('/playlist', playlistRouter)
 
-const server = app.listen(port)
+const port = process.env.PORT || 8000
 
-const redirect_url = `http://localhost:${port}/callback`
+const server = app.listen(port, () => console.log(`Running on port ${port}`))
 
-const spotifyApi = new SpotifyWebApi({
-    clientId: "66f97b199c044136aa7dba69e44b4517",
-    clientSecret: "bd8037ce06b44e47ae74a9622f2cc0a2",
-    redirectUri: redirect_url,
-    accessToken: process.env.ACCESS_TOKEN
-})
+const io = socket(server)
 
-// When our access token will expire
-let tokenExpirationEpoch;
+io.on('connection', (socket) => {
+    socket.emit('connected')
+    // User.findOne({_id: userId}).then(result => {
+    //     if(result)
+    //     {
+    //         result.follow_path.forEach(room => {
+    //             socket.join(room.id)
+    //         });
+    //     }
+    //     socket.to(result.map(item => item.id)).emit('connected')
+    // })
+    //inform loged in for everybody
 
-// First retrieve an access token
-spotifyApi.authorizationCodeGrant(authorizationCode).then(
-  function(data) {
-    // Set the access token and refresh token
-    spotifyApi.setAccessToken(data.body['access_token']);
-    spotifyApi.setRefreshToken(data.body['refresh_token']);
+    socket.on('sendMsg', data => {
+        console.log(data)
+    })
 
-    // Save the amount of seconds until the access token expired
-    tokenExpirationEpoch =
-      new Date().getTime() / 1000 + data.body['expires_in'];
-    console.log(
-      'Retrieved token. It expires in ' +
-        Math.floor(tokenExpirationEpoch - new Date().getTime() / 1000) +
-        ' seconds!'
-    );
-  },
-  function(err) {
-    console.log(
-      'Something went wrong when retrieving the access token!',
-      err.message
-    );
-  }
-);
+    socket.on('receiveMsg', (userId, toRoom, content) => {
+        Room.findOne({_id: toRoom}).then(result => {
+            if(result)
+            {
+                result.messages.push({
+                    from: userId,
+                    content: content
+                })
 
-// Continually print out the time left until the token expires..
-let numberOfTimesUpdated = 0;
-
-setInterval(function() {
-  console.log(
-    'Time left: ' +
-      Math.floor(tokenExpirationEpoch - new Date().getTime() / 1000) +
-      ' seconds left!'
-  );
-
-  // OK, we need to refresh the token. Stop printing and refresh.
-  if (++numberOfTimesUpdated > 5) {
-    clearInterval(this);
-
-    // Refresh token and print the new time to expiration.
-    spotifyApi.refreshAccessToken().then(
-      function(data) {
-        tokenExpirationEpoch =
-          new Date().getTime() / 1000 + data.body['expires_in'];
-        console.log(
-          'Refreshed token. It now expires in ' +
-            Math.floor(tokenExpirationEpoch - new Date().getTime() / 1000) +
-            ' seconds!'
-        );
-      },
-      function(err) {
-        console.log('Could not refresh the token!', err.message);
-      }
-    );
-  }
-}, 1000);
-
-app.get('/', (request, response) => {
-
-    //return list of artists have name Taylor Swift order by popularity => get items[0] to get the most popularity
-    spotifyApi.searchArtists('Taylor Swift').then(
-        function(data) {
-            console.log(data.body.artists.items[0])
-        },
-        function(err) {
-          console.error(err);
-        }
-      );
+                result.save((err, result) => {
+                    if (err) console.log(err)
+                    socket.to(toRoom.id).emit('newMsg', result)
+                })
+            }
+        })
+    })
 })

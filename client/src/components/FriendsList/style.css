@@ -1,0 +1,28 @@
+.playlist-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.playlist-item {
+    background-color: #333;
+    width: 200px;
+    margin-right: 10px;
+    margin-top: 10px;
+    height: 100px;
+    position: relative;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    box-sizing: border-box;
+    transition: background-color 300ms;
+}
+
+.playlist-item:hover {
+    background-color: #555;
+}
+
+.playlist-item > div {
+    width: 120px;
+}
