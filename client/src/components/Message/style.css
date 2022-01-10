@@ -1,0 +1,48 @@
+.message-window {
+    display: flex;
+    flex-direction: column;
+    max-height: 220px;
+    overflow: auto;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: none; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #AAA;
+    border-radius: 999px; 
+  }
+
+.message-bubble {
+    background-color: cornflowerblue;
+    border-radius: 20px;
+    padding: 10px;
+    display: table;
+    max-width: 100px;
+    margin-bottom: 5px;
+}
+
+.self {
+    float: right;
+}
+
+.input-field {
+    position: absolute;
+    bottom: 5px;
+}
+
+.input-field > input {
+    width: 200px;
+    border-radius: 20px;
+    padding: 5px;
+    border: none;
+    outline: none;
+}

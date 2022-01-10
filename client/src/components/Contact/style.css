@@ -1,0 +1,56 @@
+.search-bar {
+    width: 90%;
+    font-size: medium;
+    border-radius: 20px;
+    outline: none;
+    border: none;
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.form {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.contact-item {
+    padding: 10px;
+    height: 40px;
+    margin-bottom: 2px;
+    overflow: hidden;
+    position: relative;
+    transition: background-color 200ms;
+}
+
+.friend-details-container {
+    display: flex;
+    padding: 10px 0;
+    align-items: center;
+}
+
+.friend-image {
+    border-radius: 50%;
+    height: 30px;
+    margin-right: 10px;
+}
+
+.contact-item-active {
+    padding: 10px;
+    height: 300px;
+    margin-bottom: 2px;
+    overflow: hidden;
+    position: relative
+}
+
+.contact-item:hover {
+    background-color: #111111;
+}
+
+.contact-item:active {
+    height: 100px;
+}
+
+.message-container {
+    margin-top: 10px;
+}
