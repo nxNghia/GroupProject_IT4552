@@ -1,14 +1,25 @@
 import { constances as ACTIONS } from '../constances'
 import axios from "axios";
 import { fetchSongs } from './songActions'
-import { fetchFriendsList } from "./friendActions";
+import { fetchFollowing, fetchBeingFollowed, fetchFriendsListSuccess } from "./friendActions";
+import { socket } from '../socket/socket';
+import { fetchMessages } from './messageActions';
+import { fetchAvailableGenre } from './genresActions';
 
 export const fetchUserSuccess = (user, accessToken) => {
     return dispatch => {
-        dispatch(fetchSongs(accessToken, user.id))
-        dispatch({
-            type: ACTIONS.FETCH_USER_SUCCESS,
-            user
+        axios.post('http://localhost:8000/user/signin', { user: user }).then(response => {
+            dispatch(fetchUsers(user.id))
+            dispatch(fetchFriendsListSuccess(response.data.user.follow))
+            dispatch(fetchSongs(accessToken, user.id))
+            dispatch({
+                type: ACTIONS.FETCH_USER_SUCCESS,
+                user
+            })
+            dispatch({
+                type: ACTIONS.UPDATE_USER_STATUS,
+                blocked: response.data.user.blocked
+            })
         })
     };
 };
@@ -39,12 +50,33 @@ export const fetchUser = (accessToken) => {
                 dispatch(fetchUserSuccess(res, accessToken));
                 return res
             }).then(res => {
-                dispatch(fetchFriendsList(res.id))
+                dispatch(fetchFollowedPlaylists(res.id))
+                dispatch(fetchMessages(res.id))
+                dispatch(fetchFollowingPending(res.id))
+                dispatch(fetchBeingFollowedPending(res.id))
+                dispatch(fetchAvailableGenre())
+                socket.emit('init', res.id)
             }).catch(err => {
                 dispatch(fetchUserError(err));
             });
     };
 };
+
+export const fetchFollowingPending = (userId) => {
+    return dispatch => {
+        axios.get(`http://localhost:8000/user/following/${userId}`).then(response => {
+            dispatch(fetchFollowing(response.data.data))
+        })
+    }
+}
+
+export const fetchBeingFollowedPending = (userId) => {
+    return dispatch => {
+        axios.get(`http://localhost:8000/user/beFollowed/${userId}`).then(response => {
+            dispatch(fetchBeingFollowed(response.data.data))
+        })
+    }
+}
 
 export const addSongToLibrarySuccess = (song) => {
     return {
@@ -71,20 +103,6 @@ export const addSongToLibrary = (accessToken, song, userId) => {
         })
 
         dispatch(addSongToLibrarySuccess(song));
-
-    // const request = new Request(`https://api.spotify.com/v1/me/tracks?ids=${id}`, {
-    //   method: 'PUT',
-    //   headers: new Headers({
-    //     'Authorization': 'Bearer ' + accessToken
-    //   })
-    // });
-
-    // fetch(request).then(res => {
-    //   if(res.ok) {
-    //   }
-    // }).catch(err => {
-    //   dispatch(addSongToLibraryError(err));
-    // });
   };
 };
 
@@ -106,4 +124,84 @@ export const updatePlaylist = (id, name) => {
             name: name
         }
     })
+}
+
+export const fetchUsers = (id) => {
+    return dispatch => {
+        axios.get(`http://localhost:8000/user/getOther/${id}`)
+        .then(response => {
+            const users = []
+
+            for(let i = 0; i < 10; ++i)
+            {
+                users.push({
+                    _id: i + ' ',
+                    token: i + ' ',
+                    name: 'Test user',
+                    follow: [],
+                    liked_song: [],
+                    images: [
+                        {
+                            url: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 69 + 1)}`
+                        }
+                    ],
+                    follow_playlists: [],
+                    being_followed: [],
+                    following: [],
+                    blocked: false,
+                    reported: false
+                })
+            }
+
+            dispatch({
+                type: ACTIONS.FETCH_USERS,
+                users: [...response.data.users, ...users]
+            })
+        })
+    }
+}
+
+export const fetchFollowedPlaylists = (userId) => {
+    return dispatch => {
+        axios.get(`http://localhost:8000/playlist/followed/${userId}`)
+        .then(response => {
+            dispatch({
+                type: ACTIONS.FOLLOW_PLAYLIST_SUCCESS,
+                playlists: response.data.playlists
+            })
+        })
+    }
+}
+
+export const report = (userId) => {
+    return dispatch => {
+        axios.post('http://localhost:8000/user/report', {id: userId}).then(response => {
+            if (response.data.message === 'Success')
+            {
+                dispatch({
+                    type: ACTIONS.REPORT_SENT
+                })
+            }else{
+                dispatch({
+                    type: ACTIONS.REPORT_ERROR
+                })
+            }
+        })
+    }
+}
+
+export const reportBegin = (open, id) => {
+    return dispatch => {
+        dispatch({
+            type: ACTIONS.REPORT_BEGIN,
+            open: open,
+            userId: id
+        })
+    }
+}
+
+export const reportConfirm = (userId) => {
+    return dispatch => {
+        dispatch(report(userId))
+    }
 }

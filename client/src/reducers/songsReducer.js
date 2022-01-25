@@ -35,7 +35,6 @@ export const songsReducer = (state = defaultState, action) => {
             }
 
         case ACTIONS.ADD_SONG_TO_LIBRARY_SUCCESS:
-            console.log(action.status)
             if (action.status === 'Success')
             {
                 return {
@@ -48,7 +47,6 @@ export const songsReducer = (state = defaultState, action) => {
 
         case ACTIONS.REMOVE_SONG_FROM_LIBRARY:
             const new_songs = state.likedSongs.filter(song => song.track.id !== action.song.track.id)
-            console.log(new_songs)
             return {
                 ...state,
                 likedSongs: [...new_songs]

@@ -13,38 +13,36 @@ const SideMenu = ({
     token,
     title,
     artistIds,
-    userId
+    userId,
+    blocked
 }) => {
     const handleClick = name => {
-        updateHeaderTitle(name);
-        updateViewType(name);
+        if (!blocked)
+        {
+            updateHeaderTitle(name);
+            updateViewType(name);
+        }
     };
 
     const handleBrowseClick = () => {
-        updateHeaderTitle("Browse");
-        updateViewType("Genres");
-        fetchCategories(token);
+        if (!blocked)
+        {
+            updateHeaderTitle("Browse");
+            updateViewType("Genres");
+            fetchCategories(token);
+        }
     };
 
     const renderSideMenu = () => {
         const menu = [
-            {
-                name: "Recently Played",
-                action: fetchRecentlyPlayed
-            },
             {
                 name: "Songs",
                 action: fetchSongs,
                 getSongs: true
             },
             {
-                name: "Albums",
+                name: "Playlists",
                 action: fetchAlbums
-            },
-            {
-                name: "Artists",
-                action: fetchArtists,
-                getArtists: true
             }
         ];
 
@@ -56,12 +54,15 @@ const SideMenu = ({
                         title === item.name ? "active side-menu-item" : "side-menu-item"
                     }
                     onClick={() => {
-                        item.getArtists
-                        ? item.action(token, artistIds)
-                        : item.getSongs
-                        ? item.action(token, userId)
-                        : item.action(token);
-                        handleClick(item.name);
+                        if (!blocked)
+                        {
+                            item.getArtists
+                            ? item.action(token, artistIds)
+                            : item.getSongs
+                            ? item.action(token, userId)
+                            : item.action(token);
+                            handleClick(item.name);
+                        }
                     }}
                 >
                     {item.name}
@@ -80,7 +81,6 @@ const SideMenu = ({
             >
                 Browse
             </li>
-            <li className="side-menu-item radio">Radio</li>
             <h3 className="user-library-header">Your Library</h3>
             {renderSideMenu()}
         </ul>

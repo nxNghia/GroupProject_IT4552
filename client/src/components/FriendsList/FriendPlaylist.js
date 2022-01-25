@@ -13,23 +13,23 @@ const useStyles = makeStyles(() => ({
     }
 }))
 
-export const FriendPlaylist = ({playlist, updateHeaderTitle, updateViewType, addPlaylistItem}) => {
+export const FriendPlaylist = ({playlist, updateHeaderTitle, updateViewType, addPlaylistItem, followPlaylist, user, followedPlaylist, retrievePlaylistSongs}) => {
     const classes = useStyles()
     const [following, setFollowing] = useState([])
 
-    useEffect(() => {
-        console.log(playlist)
-    }, [playlist])
-
     const clickHandle = (p) => {
+        retrievePlaylistSongs(p.tracks.songs)
         addPlaylistItem(p)
         updateHeaderTitle(p.name, p._id)
         updateViewType('playlist')
     }
 
     const loveHandle = (p) => {
+        followPlaylist(p._id, user.id)
         if (!following.includes(p))
-        setFollowing([...following, p])
+            setFollowing([...following, p])
+        else
+            setFollowing(following => following.filter(i => i._id !== p._id))
     }
 
     return (
@@ -37,12 +37,12 @@ export const FriendPlaylist = ({playlist, updateHeaderTitle, updateViewType, add
             <h4>Playlists</h4>
             <div className="playlist-container">
                 {playlist.map(p => (
-                <div className="playlist-item">
+                <div key={p._id} className="playlist-item">
                     <div onClick={() => clickHandle(p)}>
                         {p.name}
                     </div>
                     <IconButton onClick={() => loveHandle(p)}>
-                        <FavoriteIcon className={following.includes(p) ? classes.heartIcon_active : classes.heartIcon}/>
+                        <FavoriteIcon className={(following.includes(p) || followedPlaylist.some(_p => _p._id === p._id)) ? classes.heartIcon_active : classes.heartIcon}/>
                     </IconButton>
                 </div>))}
             </div>

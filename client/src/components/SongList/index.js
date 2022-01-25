@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { fetchSongs, addSongToLibrary, removeSongFromLibrary } from '../../actions/songActions';
 // import { addSongToLibrary } from '../../actions/userActions';
-import { addToPlaylist } from '../../actions/playlistActions';
+import { addIntoPlaylist } from '../../actions/playlistActions';
 
 const mapStateToProps = (state) => {
 
@@ -20,7 +20,7 @@ const mapStateToProps = (state) => {
         songAddedId: state.userReducer.songId || '',
         viewType: state.songsReducer.viewType,
         playlistMenu: state.playlistReducer.playlistMenu,
-        // id: state.userReducer.user.id
+        blocked: state.userReducer.blocked,
         id: state.userReducer.user ? state.userReducer.user.id : '',
     };
 
@@ -32,7 +32,7 @@ const mapDispatchToProps = (dispatch) => {
         fetchSongs,
         addSongToLibrary,
         removeSongFromLibrary,
-        addToPlaylist
+        addIntoPlaylist
     }, dispatch);
 
 };

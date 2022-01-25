@@ -22,5 +22,5 @@ export default combineReducers({
     browseReducer,
     soundReducer,
     friendsReducer,
-    messageReducer,
+    messageReducer
 })

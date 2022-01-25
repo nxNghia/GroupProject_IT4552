@@ -15,12 +15,14 @@ const MainHeader = ({
     fetchSongs,
     songPaused,
     headerTitle,
+    fetchUPlaylist,
     viewType,
     playlists,
     token,
     artists,
     id,
-    user
+    user,
+    imgurl
 }) => {
 
     let currentPlaylist
@@ -50,7 +52,7 @@ const MainHeader = ({
             {viewType === 'playlist' && (
                 <div className='playlist-title-container'>
                     <div className='playlist-image-container'>
-                        <img alt="playlist" className='playlist-image' width={230} height={230} src={currentPlaylist.images[0] ? currentPlaylist.images[0].url : blank} />
+                        {currentPlaylist.images[0] && <img alt="playlist" className='playlist-image' width={230} height={230} src={currentPlaylist.images[0] ? currentPlaylist.images[0].url : blank} />}
                     </div>
                     <div className='playlist-info-container'>
                         <p className='playlist-text'>PLAYLIST</p>
@@ -69,13 +71,10 @@ const MainHeader = ({
 
             {viewType === 'user' && (
                 <div className='user-info-container'>
-                    <img alt='user' src={user.images[0].url} />
+                    <img alt='user' src={imgurl} />
                     <div>
                         <h3>{headerTitle}</h3>
-                        <ul>
-                            <li>Follower: 60</li>
-                            <li>Following: 160</li>
-                        </ul>
+                        
                     </div>
                 </div>    
             )}
@@ -100,12 +99,12 @@ const MainHeader = ({
             {(
                 headerTitle === 'Songs' ||
                 headerTitle === 'Recently Played' ||
-                headerTitle === 'Albums' ||
+                headerTitle === 'Playlists' ||
                 headerTitle === 'Artists' ||
-                headerTitle === 'Friends' ) && (
+                headerTitle === 'Friends') && (
                     <div>
                         <h3 className='header-title'>{headerTitle}</h3>
-                        {(headerTitle !== 'Artists' && headerTitle !== 'Friends') && (
+                        {(headerTitle !== 'Artists' && headerTitle !== 'Friends' && headerTitle !== 'Playlists') && (
                             <button
                                 onClick={!songPaused ? pauseSong : resumeSong}
                                 className='main-pause-play-btn'>
@@ -121,8 +120,8 @@ const MainHeader = ({
                     <h3 className='header-title'>{headerTitle}</h3>
                     <div className='browse-headers'>
                         <p className={viewType === 'Genres' ? 'active' : ''} onClick={() => { fetchCategories(token); updateViewType('Genres'); updateHeaderTitle('Browse'); }}>Genres</p>
-                        <p className={viewType === 'New Releases' ? 'active' : ''} onClick={() => { fetchNewReleases(token); updateViewType('New Releases'); updateHeaderTitle('Browse'); }}>New Releases</p>
                         <p className={viewType === 'Featured' ? 'active' : ''} onClick={() => { fetchFeatured(token); updateViewType('Featured'); updateHeaderTitle('Browse'); }}>Featured</p>
+                        <p className={viewType === 'uPlaylist' ? 'active' : ''} onClick={() => { fetchUPlaylist(user.id); updateViewType('uPlaylist'); updateHeaderTitle('Browse'); }}>uPlaylists</p>
                     </div>
                 </div>
             )}

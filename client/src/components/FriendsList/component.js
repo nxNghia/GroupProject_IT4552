@@ -1,55 +1,84 @@
-import { useEffect, useState } from 'react';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import { IconButton, makeStyles } from '@material-ui/core';
+import { useEffect } from 'react';
+import { createFollow } from '../../actions/friendActions';
+import FriendItem from './FriendItem';
+import { Modal, Button } from '@material-ui/core'
 
-const useStyles = makeStyles(() => ({
-    heartIcon: {
-        color: '#eee'
-    },
+const FriendList = ({
+    other_users = [],
+    id,
+    fetchFriendsList,
+    fetchFriendInfo,
+    updateHeaderTitle,
+    updateViewType,
+    miniTitle,
+    friendList,
+    following,
+    addFollowing,
+    followedPlaylist,
+    beingFollowed,
+    raise_report_modal,
+    report_message,
+    reportBegin,
+    reportConfirm,
+    reportId
+}) => {
+    const getList = () => {
+        // if (miniTitle === 'You May Know' || miniTitle === 'Follow You')
+        // {
+        //     return other_users.filter(user => (!friendList.some(friend => friend.friendId === user.token) && !following.some(id => id === user.token)))
+        // }else{
+        //     return following.map(id => other_users.find(user => user.token === id))
+        // }
 
-    heartIcon_active: {
-        color: '#056100'
-    }
-}))
+        switch (miniTitle)
+        {
+            case 'You May Know':
+                return other_users.filter(user => (!friendList.some(friend => friend.friendId === user.token) && !following.some(friend => friend.token === user.token)))
 
-const FriendList = ({friendsList = [], id, fetchFriendsList, fetchFriendInfo, updateHeaderTitle, updateViewType}) => {
-    const classes = useStyles()
-    const [follow, setFollow] = useState([])
+            case 'Follow You':
+                return beingFollowed
 
-    useEffect(() => {
-        console.log(friendsList)
-    }, [friendsList])
+            case 'Following':
+                return following
 
-    const followHandle = (id) => {
-        if (!follow.includes(id))
-            setFollow([...follow, id])
-    }
-
-    const clickHandle = (name) => {
-        fetchFriendInfo(id)
-        updateHeaderTitle(name)
-        updateViewType('user')
+            default: return []
+        }
     }
 
     return (
         <>
-        <h4>Following</h4>
+            <h4>{miniTitle}</h4>
             <div className='friends-view'>
-            {friendsList.map((friend, index) => {
+            {getList().map((user, index) => {
                 return (
-                    <div key={index} className='friend-details-container friend-list' onClick={() => clickHandle(friend.name)}>
-                        <div className='friend-info'>
-                            <img className='friend-image' alt='user' src='https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=1541753135972237&height=300&width=300&ext=1644084837&hash=AeSC8yDJHOhyCg24QRM' />
-                            {friend.name}
-                        </div>
-                        <IconButton onClick={() => followHandle(friend.id)}>
-                            <FavoriteIcon className={follow.includes(friend.id) ? classes.heartIcon_active : classes.heartIcon}/>
-                        </IconButton>
-                    </div>
+                    <FriendItem
+                        key={user.token}
+                        user={user}
+                        addFollowing={addFollowing}
+                        createFollow={createFollow}
+                        fetchFriendInfo={fetchFriendInfo}
+                        updateHeaderTitle={updateHeaderTitle}
+                        updateViewType={updateViewType}
+                        following={following}
+                        reportBegin={reportBegin}
+                        id={id}
+                        followed={miniTitle === 'Following' ? true : false}
+                    />
                 )
             })}
             </div>
-        <h4>You may know</h4>
+            <Modal
+                open={raise_report_modal}
+                onClose={() => reportBegin(false)}
+            >
+                <div className='report-modal'>
+                    <h3>{report_message}</h3>
+                    <div>
+                        {report_message === 'Confirm report' && <Button color='primary' variant='contained' onClick={() => reportConfirm(reportId)}>Confirm</Button>}
+                        <Button color='primary' variant='contained' onClick={() => reportBegin(false)}>Cancel</Button>
+                    </div>
+                </div>
+            </Modal>
         </>
     )
 }

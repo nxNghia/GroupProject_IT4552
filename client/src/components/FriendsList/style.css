@@ -26,3 +26,23 @@
 .playlist-item > div {
     width: 120px;
 }
+
+.report-modal {
+    position: absolute;
+    text-align: center;
+    left: 40%;
+    top: 30%;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.report-modal > h3 {
+    margin-bottom: 20px;
+}
+
+.report-modal .MuiButton-root {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+

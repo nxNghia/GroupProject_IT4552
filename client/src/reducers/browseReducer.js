@@ -6,7 +6,7 @@ export const browseReducer = (state = {}, action) => {
         case ACTIONS.FETCH_CATEGORIES_SUCCESS:
             return {
                 ...state,
-                view: action.categories.items,
+                view: action.categories,
                 fetchCategoriesError: false
             }
 

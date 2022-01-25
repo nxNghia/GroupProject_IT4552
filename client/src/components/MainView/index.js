@@ -3,13 +3,16 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateViewType } from "../../actions/songActions";
 import { updateHeaderTitle } from "../../actions/uiActions";
-import { addPlaylistItem } from "../../actions/playlistActions";
+import { addPlaylistItem, followPlaylist, retrievePlaylistSongs } from "../../actions/playlistActions";
 
 const mapStateToProps = (state) => {
     return {
         headerTitle: state.uiReducer.title,
         viewType: state.songsReducer.viewType,
-        currentFriendPlaylist: state.friendsReducer.currentFriendPlaylist
+        currentFriendPlaylist: state.friendsReducer.currentFriendPlaylist,
+        user: state.userReducer.user,
+        miniTitle: state.uiReducer.miniTitle,
+        followedPlaylist: state.playlistReducer.followedPlaylist
     };
 };
 
@@ -18,7 +21,9 @@ const mapDispatchToProps = dispatch => {
         {
             updateViewType,
             updateHeaderTitle,
-            addPlaylistItem
+            addPlaylistItem,
+            followPlaylist,
+            retrievePlaylistSongs
         },dispatch
     )
 }

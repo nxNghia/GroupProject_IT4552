@@ -1,27 +1,51 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import ContactItem from './ContactItem'
-import io from 'socket.io-client'
+import { socket } from '../../socket/socket'
 
-const socket = io.connect('/')
-
-const Contact = ({currentConnecting, setCurrentConnecting, friendsList = [], userImg, sendMessage, user, readMessage}) => {
+const Contact = ({currentConnecting, setCurrentConnecting, friendsList = [], sendMessage, user, readMessage, addContact, receiveNewMsg, newMessages, friendSearch}) => {
 
     const submitHandle = (msg, receiver) => {
-        sendMessage(socket, {content: msg, receiver: receiver, sender: user.id})
+        sendMessage({content: msg, room: receiver, sender: user.id})
     }
+
+    const [_friendsList, setList] = useState(friendsList)
+
+    useEffect(() => {
+        socket.on('a-new-match', data => {
+            addContact(data.contact)
+        })
+
+        socket.on('new-message', data => {
+            console.log(data)
+            receiveNewMsg(data)
+        })
+
+        return () => {
+            socket.off('a-new-match')
+        }
+    }, [socket])
+
+    useEffect(() => {
+        if (friendSearch === '')
+        {
+            setList(friendsList)
+        }else{
+            setList(friendsList.filter(friend => friend.name.toLowerCase().includes(friendSearch.toLowerCase())))
+        }
+    }, [friendSearch])
     
     return (
         <div className='message-container'>
-            {friendsList.map((friend) => (
+            {_friendsList.map((friend) => (
                 <ContactItem
-                    key={friend.id}
-                    className={(currentConnecting && currentConnecting.id === friend.id) ? "contact-item-active" : "contact-item"}
-                    data={{...friend, expand: currentConnecting ? currentConnecting.id === friend.id : false}}
+                    key={friend.friendId}
+                    className={(currentConnecting && currentConnecting.room === friend.room) ? "contact-item-active" : "contact-item"}
+                    data={{...friend, expand: currentConnecting ? currentConnecting.room === friend.room : false}}
                     connectHandle={setCurrentConnecting}
-                    socket={socket}
-                    userImg={userImg}
+                    newMessages={newMessages}
                     submitHandle={submitHandle}
                     readMessageHandle={readMessage}
+                    currentConnecting={currentConnecting}
                 />
             ))}
         </div>

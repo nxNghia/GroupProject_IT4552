@@ -1,15 +1,17 @@
 import Contact from "./component";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { fetchFriendsList, setCurrentConnecting, readMessage } from "../../actions/friendActions";
+import { fetchFriendsList, setCurrentConnecting, readMessage, addContact, receiveNewMsg } from "../../actions/friendActions";
 import { sendMessage } from "../../actions/messageActions";
 
 const mapStateToProps = (state) => {
     return {
         friendsList: state.friendsReducer.friendList,
+        rooms: state.friendsReducer.rooms,
         currentConnecting: state.friendsReducer.currentConnecting,
-        userImage: state.userReducer.user && state.userReducer.user.images[0] ? state.userReducer.user.images[0].url : '',
-        user: state.userReducer.user
+        user: state.userReducer.user,
+        newMessages: state.friendsReducer.newMessages,
+        friendSearch: state.uiReducer.friendSearch
     }
 }
 
@@ -18,7 +20,9 @@ const mapDispatchToProps = (dispatch) => {
         fetchFriendsList,
         setCurrentConnecting,
         sendMessage,
-        readMessage
+        readMessage,
+        addContact,
+        receiveNewMsg
     }, dispatch);
 }
 

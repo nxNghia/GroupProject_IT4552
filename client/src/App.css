@@ -65,6 +65,8 @@ body {
     width: 250px;
     overflow-y: auto;
     right: 10px;
+    padding-left: 10px;
+    border-left: 1px solid #555;
   }
 
 .main-section {
@@ -111,4 +113,10 @@ body {
     width: 350px;
     display: flex;
     align-items: center;
+}
+
+.blocked-message {
+    position: absolute;
+    top: 40%;
+    left: 50%;
 }

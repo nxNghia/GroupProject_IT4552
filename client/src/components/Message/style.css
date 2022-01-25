@@ -22,7 +22,7 @@
   }
 
 .message-bubble {
-    background-color: cornflowerblue;
+    background-color: rgb(81, 127, 211);
     border-radius: 20px;
     padding: 10px;
     display: table;
@@ -32,15 +32,16 @@
 
 .self {
     float: right;
+    background-color: rgb(190, 123, 35);
 }
 
 .input-field {
     position: absolute;
-    bottom: 5px;
+    bottom: 10px;
 }
 
 .input-field > input {
-    width: 200px;
+    width: 220px;
     border-radius: 20px;
     padding: 5px;
     border: none;

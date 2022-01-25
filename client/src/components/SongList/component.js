@@ -34,8 +34,9 @@ const SongList = ({
     removeSongFromLibrary,
     pauseSong,
     fetchSongsError,
-    addToPlaylist,
-    playlistMenu
+    addIntoPlaylist,
+    playlistMenu,
+    blocked
 }) => {
     const classes = useStyles()
     const [open, setOpen] = useState(false)
@@ -126,7 +127,7 @@ const SongList = ({
               </div>
     
               <div className="song-added">
-                <p>{moment(song.added_at).format("YYYY-MM-DD")}</p>
+                <p>{moment(song.track.added_at).format("YYYY-MM-DD")}</p>
               </div>
     
               <div className="song-length">
@@ -145,9 +146,9 @@ const SongList = ({
         });
       }
 
-    const addIntoPlaylist = (playlistId) => {
+    const addIntoPlaylistHandle = (playlistId) => {
         setOpen(false)
-        addToPlaylist(playlistId, selectSong)
+        addIntoPlaylist(playlistId, selectSong)
     }
 
     return (
@@ -180,12 +181,12 @@ const SongList = ({
             !fetchSongsPending &&
             !fetchPlaylistSongsPending &&
             renderSongs()} */}
-            {(songs || likedSongs) && renderSongs()}
+            {!blocked && (songs || likedSongs) && renderSongs()}
 
         <Modal open={open} onClose={() => setOpen(false)}>
-            <div className="modal">
+            <div className="modal playlist-modal">
                 {playlistMenu && playlistMenu.map(playlist => (
-                    <div key={playlist._id} onClick={() => addIntoPlaylist(playlist._id)}>{playlist.name}</div>
+                    <div key={playlist._id} onClick={() => addIntoPlaylistHandle(playlist._id)}>{playlist.name}</div>
                 ))}
                 {playlistMenu && playlistMenu.length === 0 && <p>Seem like you don't have any playlist. How about create one?</p>}
             </div>

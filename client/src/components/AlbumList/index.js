@@ -1,15 +1,21 @@
 import AlbumList from "./component";
 import { connect } from "react-redux";
-import uniqBy from "lodash/uniqBy";
-
+import { bindActionCreators } from "redux";
+import { updateHeaderTitle } from "../../actions/uiActions";
+import { updateViewType } from "../../actions/songActions";
+import { addPlaylistItem } from '../../actions/playlistActions'
 const mapStateToProps = state => {
-    const albumSongs = state.songsReducer.songs
-        ? uniqBy(state.songsReducer.songs, item => item.track.album.name)
-        : "";
-
     return {
-        songs: albumSongs
-    };
+        followedPlaylist: state.playlistReducer.followedPlaylist
+    }
 };
 
-export default connect(mapStateToProps)(AlbumList);
+const mapDispatchToProps = (dispatch) => {
+    return bindActionCreators({
+        addPlaylistItem,
+        updateViewType,
+        updateHeaderTitle
+    }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AlbumList);
