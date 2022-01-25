@@ -26,7 +26,8 @@ const UserPlaylists = ({
     updateViewType,
     addPlaylistItem,
     retrievePlaylistSongs,
-    id
+    id,
+    blocked
 }) => {
     const classes = useStyles()
     const [open, setOpen] = useState(false)
@@ -38,7 +39,7 @@ const UserPlaylists = ({
         {
             fetchPlaylistsMenu(userId)
         }
-    }, [token, userId, title])
+    }, [token, userId])
 
     const selectPlaylistHandle = id => {
         setSelectedPlaylistId(id)
@@ -48,10 +49,13 @@ const UserPlaylists = ({
     const renderPlaylists = () => {
         return playlistMenu.map((playlist, index) => {
             const getPlaylistSongs = () => {
-                retrievePlaylistSongs(playlist.tracks.songs)
-                updateViewType('playlist')
-                updateHeaderTitle(playlist.name, playlist.id ? playlist.id : playlist._id)
-                addPlaylistItem(playlist)
+                if (!blocked)
+                {
+                    retrievePlaylistSongs(playlist.tracks.songs)
+                    updateViewType('playlist')
+                    updateHeaderTitle(playlist.name, playlist.id ? playlist.id : playlist._id)
+                    addPlaylistItem(playlist)
+                }
             };
   
             return (

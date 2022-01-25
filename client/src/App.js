@@ -15,6 +15,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { fetchUser } from './actions/userActions';
 import { setToken } from './actions/tokenActions';
+import { searchFriend } from "./actions/uiActions";
 import { useDispatch } from "react-redux";
 import {
   playSong,
@@ -31,10 +32,10 @@ const App = ({
     pauseSong,
     stopSong,
     resumeSong,
-    volume
+    volume,
+    blocked,
+    searchFriend
 }) => {
-    const dispatch = useDispatch()
-
     let audio
     useEffect(() => {
         let hashParams = {}
@@ -115,21 +116,21 @@ const App = ({
                     <Header />
 
                     <div className="main-section-container">
-                        <MainHeader
+                        {!blocked && <MainHeader
                             pauseSong={pauseSongHandle}
                             resumeSong={resumeSongHandle}
-                        />{' '}
+                        />}{' '}
 
-                        <MainView
+                        {!blocked ? <MainView
                             pauseSong={pauseSongHandle}
                             resumeSong={resumeSongHandle}
                             audioControl={audioControl}
-                        />
+                        /> : <h1 className="block-message">You have been blocked</h1>}
                     </div>
                 </div>
             
                 <div className="right-side-section">
-                    <Search />
+                    <Search searchHandle={searchFriend}/>
                     <Contact />
                 </div>
 
@@ -159,6 +160,7 @@ const mapStateToProps = (state) => {
     return {
         token: state.tokenReducer.token,
         volume: state.soundReducer.volume,
+        blocked: state.userReducer.blocked
     }
 }
 
@@ -171,6 +173,7 @@ const mapDispatchToProps = (dispatch) => {
             stopSong,
             pauseSong,
             resumeSong,
+            searchFriend
         },
         dispatch
     )

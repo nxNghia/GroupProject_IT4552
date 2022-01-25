@@ -8,7 +8,7 @@ import {
 } from "../../actions/browseActions";
 import { updateHeaderTitle } from "../../actions/uiActions";
 import { updateViewType, fetchSongs } from "../../actions/songActions";
-import { removePlaylist } from "../../actions/playlistActions";
+import { removePlaylist, fetchUPlaylist } from "../../actions/playlistActions";
 
 const mapStateToProps = state => {
     return {
@@ -21,7 +21,8 @@ const mapStateToProps = state => {
             : [],
         token: state.tokenReducer.token,
         id: state.uiReducer.id,
-        user: state.userReducer.user
+        user: state.userReducer.user,
+        imgurl: state.uiReducer.imgurl
     };
 };
 
@@ -34,7 +35,8 @@ const mapDispatchToProps = dispatch => {
             updateViewType,
             fetchFeatured,
             removePlaylist,
-            fetchSongs
+            fetchSongs,
+            fetchUPlaylist
         },
         dispatch
     );

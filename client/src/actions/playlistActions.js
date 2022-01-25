@@ -82,6 +82,14 @@ export const fetchPlaylistSongsError = () => {
     };
 };
 
+// export const fetchUPlaylistSongs = (playlistId) => {
+//     return dispatch => {
+//         axios.get(`http://localhost:8000/playlist/get/${playlistId}`).then(response => {
+//             if(response.)
+//         })
+//     }
+// }
+
 export const fetchPlaylistSongs = (userId, playlistId, accessToken) => {
     return dispatch => {
         const request = new Request(`https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`, {
@@ -116,16 +124,6 @@ export const retrievePlaylistSongs = (songs) => {
     }
 }
 
-export const addToPlaylist = (playlistId, song) => {
-    return dispatch => dispatch({
-        type: ACTIONS.ADD_INTO_PLAYLIST,
-        data: {
-            song: song,
-            playlistId: playlistId
-        }
-    })
-}
-
 export const updatePlaylist = (id, name) => {
     return dispatch => {
         axios.post('http://localhost:8000/playlist/update', { playlist_id: id, new_name: name }).then(response => {
@@ -156,7 +154,6 @@ export const createPlaylist = (user) => {
             },
             owner: user
         } }).then(response => {
-            console.log(response)
             dispatch(addPlaylistItem(response.data.result))
             dispatch(updateHeaderTitle(response.data.result.name, response.data.result._id))
             dispatch(updateViewType('playlist'))
@@ -176,6 +173,88 @@ export const removePlaylist = (id) => {
                 type: ACTIONS.REMOVE_PLAYLIST,
                 data: response.data
             })
+        })
+    }
+}
+
+export const fetchUPlaylist = (id) => {
+    return dispatch => {
+        axios.get(`http://localhost:8000/playlist/else/${id}`).then(response => {
+            dispatch({
+                type: ACTIONS.FETCH_UPLAYLIST,
+                uPlaylists: response.data.playlists
+            })
+        })
+    }
+}
+
+export const followPlaylistSuccess = (playlists) => {
+    return {
+        type: ACTIONS.FOLLOW_PLAYLIST_SUCCESS,
+        playlists: playlists
+    }
+}
+
+export const followPlaylistError = () => {
+    return {
+        type: ACTIONS.FOLLOW_PLAYLIST_ERROR
+    }
+}
+
+export const fetchFollowedPlaylists = (userId) => {
+    return dispatch => {
+        axios.get(`http://localhost:8000/playlist/followed/${userId}`)
+        .then(response => {
+            if (response && response.data.message === 'Success')
+            {
+                dispatch(followPlaylistSuccess(response.data.playlists))
+            }else{
+                dispatch(followPlaylistError())
+            }
+        }).catch(() => dispatch(followPlaylistError()))
+    }
+}
+
+export const followPlaylist = (playlist_id, user_id) => {
+    return dispatch => {
+        axios.post('http://localhost:8000/playlist/follow', { user_id, playlist_id })
+        .then(response => {
+            if (response && response.data.message === 'Success')
+            {
+                dispatch(followPlaylistSuccess(response.data.playlists))
+            }else{
+                dispatch(followPlaylistError())
+            }
+        }).catch(() => {
+            dispatch(followPlaylistError())
+        })
+    }
+}
+
+export const addIntoPlaylistError = () => {
+    return {
+        type: ACTIONS.ADD_INTO_PLAYLIST_ERROR
+    }
+}
+
+export const addIntoPlaylistSuccess = (playlistId, song) => {
+    return {
+        type: ACTIONS.ADD_INTO_PLAYLIST,
+        data: {
+            song: song,
+            playlistId: playlistId
+        }
+    }
+}
+
+export const addIntoPlaylist = (playlist_id, song) => {
+    return dispatch => {
+        axios.post('http://localhost:8000/playlist/add', { playlist_id: playlist_id, song: song })
+        .then(response => {
+            if (response.data.message !== 'Success')
+                dispatch(addIntoPlaylistError())
+            else
+                dispatch(addIntoPlaylistSuccess(playlist_id, song))
         })
     }
 }

@@ -5,7 +5,9 @@ import { fetchFriendsList } from "../../actions/friendActions";
 
 const mapStateToProps = (state) => {
     return {
-        messages: state.messageReducer.messages
+        messages: state.friendsReducer.friendList,
+        newMessages: state.friendsReducer.newMessages,
+        user: state.userReducer.user
     }
 }
 

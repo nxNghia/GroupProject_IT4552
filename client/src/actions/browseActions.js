@@ -1,3 +1,4 @@
+import axios from "axios";
 import { constances as ACTIONS } from "../constances";
 
 export const fetchCategoriesSuccess = (categories) => {
@@ -15,19 +16,14 @@ export const fetchCategoriesError = () => {
   
 export const fetchCategories = (accessToken) => {
     return dispatch => {
-        const request = new Request(`https://api.spotify.com/v1/browse/categories`, {
-            headers: new Headers({
-                'Authorization': 'Bearer ' + accessToken
-            })
-        });
+        axios.get('http://localhost:8000/genre/getAllChecked').then(response => {
+            if (response)
+            {
+                const genres_list = response.data.map(genre => ({ id: genre.id, name: genre.name, icons: [{ url: genre.image }], href: `https://api.spotify.com/v1/browse/categories/${genre.id}` }))
 
-        fetch(request).then(res => {
-            return res.json()
-        }).then(res => {
-            dispatch(fetchCategoriesSuccess(res.categories))
-        }).catch(err => {
-            dispatch(fetchCategoriesError(err))
-        });
+                dispatch(fetchCategoriesSuccess(genres_list))
+            }
+        })
     };
 };
   

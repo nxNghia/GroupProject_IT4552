@@ -21,7 +21,8 @@ const mapStateToProps = (state) => {
 		title: state.uiReducer.title,
         playlists: state.userReducer.playlists,
         user: state.userReducer.user,
-        id: state.uiReducer.id
+        id: state.uiReducer.id,
+        blocked: state.userReducer.blocked
 	};
 
 };

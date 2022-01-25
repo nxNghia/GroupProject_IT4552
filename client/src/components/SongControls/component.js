@@ -230,7 +230,7 @@ const SongControls = ({
             <div className='song-progress'>
                 <div style={{ width: _timeElapsed * 16.5 }} className='song-expired' />
                 </div>
-                <p className=']timer-end'>{moment().minutes(0).second(30 - _timeElapsed).format('m:ss')}</p>
+                <p className='timer-end'>{moment().minutes(0).second(30 - _timeElapsed).format('m:ss')}</p>
             </div>
 
         </div>

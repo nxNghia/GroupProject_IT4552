@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Message from '../Message'
 import InputField from '../Message/InputField'
 import './style.css'
@@ -22,13 +22,13 @@ const ClickOutSideHandle = (ref, connectHandle, data) => {
     }, [ref])
 }
 
-const ContactItem = ({data, connectHandle, socket, className, userImg, submitHandle, readMessageHandle}) => {
+const ContactItem = ({data, connectHandle, className, submitHandle, readMessageHandle, newMessages = [], currentConnecting}) => {
     const mesRef = useRef(null)
 
     ClickOutSideHandle(mesRef, connectHandle, data)
 
     const _submitHandle = (msg) => {
-        submitHandle(msg, data.id)
+        submitHandle(msg, data.room)
     }
 
     const readNewMessageHandle = () => {
@@ -36,15 +36,25 @@ const ContactItem = ({data, connectHandle, socket, className, userImg, submitHan
             readMessageHandle(data.id)
     }
 
+    const [hasNewMsg, setHasNewMsg] = useState(false)
+
+    useEffect(() => {
+        if (newMessages.includes(data.friendId))
+            setHasNewMsg(true)
+        else
+            setHasNewMsg(false)
+    }, [newMessages])
+
     return (
         <div ref={mesRef} className={className} onClick={readNewMessageHandle}>
             <div className="friend-details-container">
-                <Badge color="secondary" variant='dot' invisible={!data.newMessage}>
-                    <img className="friend-image" alt="user" src='https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=1541753135972237&height=300&width=300&ext=1644084837&hash=AeSC8yDJHOhyCg24QRM' />
+                <Badge color="secondary" variant='dot' invisible={!hasNewMsg}>
+                    <img className="friend-image" alt="user" src={data.image} />
+                    {/* <img className="friend-image" alt="user" src="https://i.pravatar.cc/100" /> */}
                 </Badge>
                 {data.name}
             </div>
-            <Message expand={data.expand} to={data.id}/>
+            <Message to={data.friendId}/>
             {data.expand && <InputField submitHandle={_submitHandle}/>}
         </div>
     )

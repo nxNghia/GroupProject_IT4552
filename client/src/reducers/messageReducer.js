@@ -43,13 +43,6 @@ const defaultState = {
 export const messageReducer = (state = defaultState, action) => {
     switch (action.type)
     {
-        case ACTIONS.FETCH_MESSAGES:
-            {
-                return {
-                    ...state,
-                    messages: action.messages
-                }
-            }
             
         case ACTIONS.SENT_MESSAGE:
             {

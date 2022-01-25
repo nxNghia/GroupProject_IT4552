@@ -37,3 +37,11 @@
     transform: translate(-50%, 100%);
     font-size: 18px;
 }
+
+.category-owner-name {
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    transform: translate(-50%, 100%);
+    font-size: 18px;
+}

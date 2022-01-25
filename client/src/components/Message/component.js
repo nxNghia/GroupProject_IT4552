@@ -1,32 +1,34 @@
-import React, { Component } from 'react'
-import InputField from './InputField'
+import React, { useEffect, useState, useRef } from 'react'
 import './style.css'
 
-class Message extends Component {
-    constructor(props) {
-        super(props)
+const Message = ({messages, to, newMessages, user}) => {
+    const msgEnding = useRef(null)
+    const getMsg = () => messages.find(friend => friend.friendId === to).messages || []
+    // const [firstLoad, setFirstLoad] = useState(true)
 
-        this.state = {
-            messages: this.props.messages.some(mes => mes.to === this.props.to)
-                ? this.props.messages.find(mes => mes.to === this.props.to).data : []
-        }
-    }
+    const [_messages, setMessages] = useState(getMsg())
 
-    render() {
-        return (
-            <div className="message-window">
-                {this.state.messages.map(mes => (
-                    <div className="message-bubble-container" key={mes.id}>
-                        <div key={mes.id} className={mes.self ? "message-bubble self" : "message-bubble"}>
-                            <p>{mes.content}</p>
-                        </div>
+    useEffect(() => {
+        setMessages(getMsg())
+        // if(!firstLoad)
+        // {
+        //     msgEnding.current.scrollIntoView({ behavior: 'smooth' })
+        //     setFirstLoad(false)
+        // }
+    }, [newMessages])
+
+    return (
+        <div className="message-window">
+            {_messages.map((mes, index) => (
+                <div className="message-bubble-container" key={index}>
+                    <div className={user.id === mes.from ? "message-bubble self" : "message-bubble"}>
+                        <p>{mes.content}</p>
                     </div>
-                ))}
-
-                {/* {this.props.expand && <InputField/>} */}
-            </div>
-        )
-    }
+                </div>
+            ))}
+            <div ref={msgEnding} />
+        </div>
+    )
 }
 
 export default Message

@@ -51,7 +51,7 @@ export const fetchSongs = (accessToken, userId = '') => {
                         return res.json();
                     }).then(res => {
                         res.items = res.tracks.map(track => {
-                            return { track: track }
+                            return { track: {...track, added_at: song.added_at} }
                         });
 
                         resolve(res.items)

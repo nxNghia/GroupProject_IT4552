@@ -1,9 +1,10 @@
 const mongoose = require('mongoose')
 
-const followSchema = new mongoose.Schema({
+const roomSchema = new mongoose.Schema({
+    roomId: String,
     messages: mongoose.SchemaTypes.Array
 })
 
-const Follow = mongoose.model('Follow', followSchema, 'follow')
+const Room = mongoose.model('Room', roomSchema, 'room')
 
-module.exports = Follow
+module.exports = Room

@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import './style.css';
 
-const BrowseView = ({ view, viewType, token, fetchPlaylistSongs, updateHeaderTitle, addPlaylistItem, fetchGenre, updateViewType }) => {
+const BrowseView = ({ view, viewType, token, fetchPlaylistSongs, updateHeaderTitle, addPlaylistItem, fetchGenre, updateViewType, uPlaylists = [] }) => {
 
     let browseView;
 
-    if (view) {
+    if (view && viewType !== 'uPlaylist') {
 
         browseView = view.map((item, i) => {
 
@@ -22,7 +22,7 @@ const BrowseView = ({ view, viewType, token, fetchPlaylistSongs, updateHeaderTit
             }
 
             return (
-                <li onClick={viewType === 'Featured' ? getPlaylistSongs : viewType === 'Genres' ? getGenre : null} className='category-item' key={i}>
+                <li onClick={viewType === 'Featured' || viewType === 'uPlaylist' ? getPlaylistSongs : viewType === 'Genres' ? getGenre : null} className='category-item' key={i}>
                     <div className='category-image'>
                         <img alt="category" src={item.icons ? item.icons[0].url : item.images[0].url} />
                             {viewType === 'Genres' && (
@@ -32,6 +32,27 @@ const BrowseView = ({ view, viewType, token, fetchPlaylistSongs, updateHeaderTit
                 </li>
             );
         });
+    }else{
+        if(viewType === 'uPlaylist') {
+            browseView = uPlaylists.map((item, i) => {
+
+                const getPlaylistSongs = () => {
+                    addPlaylistItem(item);
+                    updateHeaderTitle(item.name, item._id);
+                    updateViewType('playlist')
+                };
+    
+                return (
+                    <li onClick={getPlaylistSongs} className='category-item' key={i}>
+                        <div className='category-image'>
+                            <img alt="category" src={item.owner.images[0].url} />
+                            <p className='category-name'>{item.name}</p>
+                            <p className='category-owner-name'>{item.owner.display_name}</p>
+                        </div>
+                    </li>
+                );
+            });
+        }
     }
 
     return (

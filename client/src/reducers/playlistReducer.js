@@ -1,7 +1,9 @@
 import { constances as ACTIONS } from "../constances";
 
 const defaultState = {
-    playlists: []
+    playlists: [],
+    uPlaylists: [],
+    followedPlaylist: []
 }
 
 export const playlistReducer = (state = defaultState, action) => {
@@ -23,6 +25,14 @@ export const playlistReducer = (state = defaultState, action) => {
             }
 
         case ACTIONS.ADD_PLAYLIST_ITEM:
+            if (state.playlists.some(playlist => {
+                if(playlist.id)
+                    return playlist.id === action.playlist.id || playlist.id === action.playlist._id
+                else
+                    return playlist._id === action.playlist.id || playlist._id === action.playlist._id
+            }))
+            return state
+            else
             return {
                 ...state,
                 playlists: [
@@ -49,7 +59,7 @@ export const playlistReducer = (state = defaultState, action) => {
 
                 return {
                     ...state,
-                    // playlistMenu: [...new_playlist]
+                    playlistMenu: [...new_playlist]
                 }
             }else{
                 return state
@@ -92,6 +102,18 @@ export const playlistReducer = (state = defaultState, action) => {
                 }
             }else{
                 return state
+            }
+
+        case ACTIONS.FETCH_UPLAYLIST:
+            return {
+                ...state,
+                uPlaylists: action.uPlaylists
+            }
+
+        case ACTIONS.FOLLOW_PLAYLIST_SUCCESS:
+            return {
+                ...state,
+                followedPlaylist: action.playlists
             }
 
         default: return state
