@@ -6,7 +6,7 @@ const Playlist = require('../models/Playlist.model')
 
 const router = express.Router()
 
-
+// Lấy về danh sách những playlist được tạo bởi người dùng có id là userId
 router.get('/:userId', (request, response) => {
     const userId = request.params.userId
 
@@ -21,20 +21,7 @@ router.get('/:userId', (request, response) => {
     }
 })
 
-// router.get('/get/:id', (request, response) => {
-//     const playlist_id = request.params.id
-
-//     try
-//     {
-//         Playlist.findOne({ _id: playlist_id }).then(result => {
-//             response.status(200).send({ message: 'Success', result: result })
-//         })
-//     }catch(err)
-//     {
-//         response.status(400).send({ message: 'Failed', result: null })
-//     }
-// })
-
+// Tạo mới 1 playlist
 router.post('/create', (request, response) => {
     const req_data = request.body.playlist_info
     const new_playlist = new Playlist({
@@ -62,6 +49,7 @@ router.post('/create', (request, response) => {
     }
 })
 
+// Bổ sung 1 bài hát mới vào playlist
 router.post('/add', (request, response) => {
     const playlist_id = request.body.playlist_id
     const new_song = request.body.song
@@ -73,26 +61,30 @@ router.post('/add', (request, response) => {
             {
                 if(result.tracks.songs.some(song => song.track.id === new_song.id))
                 {
-                    response.status(200).send({ message: 'Duplicate' })
+                    response.status(200).send({ message: 'Duplicate' }) //Nếu trùng thì trả về thông báo tương ứng
                 }else{
                     result.tracks.total = result.tracks.songs.length + 1
                     result.tracks.songs.push(new_song)
     
                     result.save(err => {
                         if (err) console.log(err)
-                        response.status(200).send({ message: err ? 'Failed to save' : 'Success' })
+                        response.status(200).send({ message: err ? 'Failed to save' : 'Success' })  //Nếu thành công hay thất bại, trả về message tương ứng
                     })
                 }
             }else{
-                response.status(200).send({ message: 'Unavailable' })
+                response.status(200).send({ message: 'Unavailable' })   //Không tìm thấy playlist
             }
         })
     }catch(err)
     {
-        response.status(400).send({ message: 'Failed' })
+        response.status(400).send({ message: 'Failed' })    //Lỗi
     }
 })
 
+// Thay đổi thông tin của playlist (trong trường hợp này là tên)
+// Nhận vào 2 tham số
+// id playlist cần thay đổi
+// tên mới
 router.post('/update', (request, response) => {
     const playlist_id = request.body.playlist_id
     const new_name = request.body.new_name
@@ -106,21 +98,23 @@ router.post('/update', (request, response) => {
                 result.save((err, result2) => {
                     if (err)
                     {
-                        response.status(200).send({ message: "Failed", result: result })
+                        response.status(200).send({ message: "Failed", result: result })    //Thất bại
                     }else{
-                        response.status(200).send({ message: "Success", result: result2 })
+                        response.status(200).send({ message: "Success", result: result2 })  //Thành công
                     }
                 })
             }else{
-                response.status(200).send({ message: "Unavailable" })
+                response.status(200).send({ message: "Unavailable" })   //Không tìm thấy playlist
             }
         })
     }catch(err)
     {
-        response.status(400).send({ message: 'Failed' })
+        response.status(400).send({ message: 'Failed' })    //Lỗi
     }
 })
 
+//Xóa playlist
+// Nhận vào id của playlist
 router.post('/remove', (request, response) => {
     const id = request.body.id
 
@@ -144,6 +138,8 @@ router.post('/remove', (request, response) => {
     }
 })
 
+//Lấy danh sách những playlist không thuộc sở hữu của một người dùng
+//Dành cho chức năng gợi ý những playlist của người dùng khác
 router.get('/else/:id', (request, response) => {
     const user_id = request.params.id
 
@@ -158,6 +154,8 @@ router.get('/else/:id', (request, response) => {
     }
 })
 
+//Thực hiện việc follow 1 playlist của người khác
+//Nhận vào id của người đi follow và id của playlist được follow
 router.post('/follow', (request, response) => {
     const user_id = request.body.user_id
     const playlist_id = request.body.playlist_id
@@ -212,6 +210,8 @@ router.post('/follow', (request, response) => {
     }
 })
 
+//Trả về danh sách những playlist đã follow của một người dùng
+//Nhận vào id của người dùng
 router.get('/followed/:userId', (request, response) => {
     const userId = request.params.userId
 

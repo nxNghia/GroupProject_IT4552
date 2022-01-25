@@ -5,6 +5,8 @@ const router = express.Router()
 const Room = require('../models/Room.model')
 const User = require('../models/User.model')
 
+// Trả về danh sách bạn bè của người dùng (cả hai đã follow nhau), cùng với nội dung tin nhắn của từng follow
+// Nhận vào id của người dùng
 router.get('/:userId', (request, response) => {
     const userId = request.params.userId
 

@@ -26,6 +26,10 @@ const Contact = ({currentConnecting, setCurrentConnecting, friendsList = [], sen
     }, [socket])
 
     useEffect(() => {
+        setList(friendsList)
+    }, [friendsList])
+
+    useEffect(() => {
         if (friendSearch === '')
         {
             setList(friendsList)
