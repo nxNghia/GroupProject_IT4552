@@ -5,6 +5,7 @@ const User = require('../models/User.model')
 
 const router = express.Router()
 
+// Chức năng thích 1 bài hát, bài hát đó sẽ được thêm vào mảng liked_song (dòng 20)
 router.post('/liked', (request, response) => {
     const userId = request.body.userId
     const new_song = request.body.song
@@ -38,6 +39,8 @@ router.post('/liked', (request, response) => {
     }
 })
 
+// Nếu bài hát đó đã tồn tại trong danh sách thích, sau khi ấn icon 1 lần nữa, bài hát đó sẽ được gỡ khỏi danh sách đã thích của người dùng
+// Nhận vào thông tin của bài hát cùng với id của người dùng
 router.post('/remove', (request, response) => {
     const remove_song = request.body.song
     const userId = request.body.userId

@@ -14,11 +14,9 @@ const playlistRouter = require('./routes/playlist.route')
 const roomRouter = require('./routes/room.route')
 const genreRouter = require('./routes/genre.route')
 
-const mongoURL = 'mongodb://localhost:27017/soulify'
-
 try {
     mongoose.connect(
-        mongoURL,
+        process.env.DATABASE_URL,
         { useNewUrlParser: true, useUnifiedTopology: true }
     )
 }catch {

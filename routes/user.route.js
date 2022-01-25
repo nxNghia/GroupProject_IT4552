@@ -4,6 +4,8 @@ const User = require('../models/User.model')
 
 const router = express.Router()
 
+// Trả về danh sách bạn bè của người dùng (đã follow lẫn nhau) => dựa vào thông tin từ api này '/:userId' trong room.routes sẽ lấy được chi tiết
+// Nhận vào id người dùng
 router.get('/:id/friends', (request, response) => {
     const param = request.params.id
     
@@ -18,6 +20,7 @@ router.get('/:id/friends', (request, response) => {
     }
 })
 
+// Lấy danh sách những người dùng khác người dùng hiện tại
 router.get('/getOther/:id', (request, response) => {
     const user_id = request.params.id
     
@@ -32,6 +35,7 @@ router.get('/getOther/:id', (request, response) => {
     }
 })
 
+// Khi chương trình lấy được token của người dùng qua API của Spotify, api này sẽ kiểm tra người dùng đó đã tồn tại trong csdl hay chưa. Nếu chưa thì thêm vào
 router.post('/signin', (request, response) => {
     const user = request.body.user
 
@@ -71,6 +75,7 @@ router.post('/signin', (request, response) => {
     }
 })
 
+//Trả về danh sách những bài hát đã được thích bởi người dùng
 router.get('/song/liked/:id', (request, response) => {
     const id = request.params.id
     
@@ -90,6 +95,7 @@ router.get('/song/liked/:id', (request, response) => {
     }
 })
 
+// Trả về danh sách của tất cả người dùng
 router.get('/all', (request, response) => {
     try
     {
@@ -102,6 +108,8 @@ router.get('/all', (request, response) => {
     }
 })
 
+//Dành cho admin khi chặn người dùng
+//Nhận vào id người dùng bị block
 router.post('/block', (request, response) => {
     try
     {
@@ -129,12 +137,12 @@ router.post('/block', (request, response) => {
     }
 })
 
+//Tạo 1 report về 1 người dùng lên hệ thống
+// Thuộc tính reported của người dùng sẽ chuyển sang true
 router.post('/report', (request, response) => {
     try
     {
         const id = request.body.id
-        
-        // response.send({ message: 'Success' })
 
         User.findOne({ token: id }).then(result => {
             if(result)
@@ -156,6 +164,7 @@ router.post('/report', (request, response) => {
     }
 })
 
+//Danh sách những người đang follow người dùng
 router.get('/beFollowed/:id', (request, response) => {
     try
     {
@@ -182,6 +191,7 @@ router.get('/beFollowed/:id', (request, response) => {
     }
 })
 
+// Danh sách những người mà người dùng đang follow
 router.get('/following/:id', (request, response) => {
     try
     {
