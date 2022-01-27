@@ -15,7 +15,10 @@ const mapStateToProps = state => {
     timeElapsed: state.songsReducer.timeElapsed,
     songPaused: state.songsReducer.songPaused,
     songDetails: state.songsReducer.songDetails,
-    songs: state.songsReducer.songs
+    songs: state.songsReducer.songs,
+    albumImage: state.songsReducer.songDetails
+            ? state.songsReducer.songDetails.album.images[0].url
+            : ""
   };
 };
 

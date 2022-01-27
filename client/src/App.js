@@ -1,9 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Header from './components/Header/';
 import Footer from './components/Footer/';
 import UserPlaylists from './components/UserPlaylists/';
 import MainView from './components/MainView/';
-import ArtWork from './components/ArtWork/';
 import MainHeader from './components/MainHeader/';
 import SideMenu from './components/SideMenu/';
 import Friend from './components/Friends/';
@@ -17,6 +16,7 @@ import { fetchUser } from './actions/userActions';
 import { setToken } from './actions/tokenActions';
 import { searchFriend } from "./actions/uiActions";
 import { useDispatch } from "react-redux";
+import UserDetails from "./components/UserDetails";
 import {
   playSong,
   stopSong,
@@ -53,6 +53,7 @@ const App = ({
         } else {                   //`https://accounts.spotify.com/authorize?client_id=66f97b199c044136aa7dba69e44b4517&scope=playlist-read-private%20playlist-read-collaborative%20playlist-modify-public%20user-read-recently-played%20playlist-modify-private%20ugc-image-upload%20user-follow-modify%20user-follow-read%20user-library-read%20user-library-modify%20user-read-private%20user-read-email%20user-top-read%20user-read-playback-state&response_type=token&redirect_uri=http://localhost:3000/callback
             setToken(hashParams.access_token)
         }
+        window.location.hash = ""
     }, [])
 
     useEffect(() => {
@@ -86,17 +87,21 @@ const App = ({
             audio.play();
         }
     }
-
+    const [art,setArt] = useState("")
     const audioControl = (song) => {
+        console.log(song.track.album.images[0].url)
+      
         if (audio === undefined)
         {
             playSong(song.track)
+            // setArt(song.track.album.images[0].url)
             audio = new Audio(song.track.preview_url)
             audio.play()
         }else{
             stopSongHandle()
             audio.pause()
             playSong(song.track)
+            // setArt(song.track.album.images[0].url)
             audio = new Audio(song.track.preview_url)
             audio.play()
         }
@@ -105,11 +110,11 @@ const App = ({
     return (
         <div className="App">
             <div className="app-container">
+                <UserDetails />
                 <div className="left-side-section">
                     <SideMenu />
                     <UserPlaylists />
                     <Friend />
-                    <ArtWork />
                 </div>
 
                 <div className="main-section">
