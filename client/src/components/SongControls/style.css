@@ -1,17 +1,25 @@
+.song-player-container{
+  display: flex;
+  align-items: center;
+  position: relative;
+}
 .song-details {
+  margin-left: 30px;
+}
+
+.song-play{
   position: absolute;
-  left: 20px;
-  line-height: 22px;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .song-details .song-name {
-  font-family: 'Proxima Nova', Georgia, sans-serif;
   color: #fff;
   font-size: 14px;
 }
 
 .song-details .artist-name {
-  font-family: 'Proxima Thin', Georgia, sans-serif;
   color: #aaa;
   font-size: 12px;
 }
@@ -19,7 +27,7 @@
 .song-controls {
   justify-content: center;
   display: flex;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .forward,
@@ -32,18 +40,18 @@
 
 .reverse,
 .forward {
-  font-size: 16px;
+  font-size: 20px;
 }
 
 .song-player-container .play-btn {
   position: relative;
-  top: -7px;
+  top: -10px;
   font-size: 40px;
 }
 
 .song-player-container .pause-btn {
   position: relative;
-  top: -7px;
+  top: -10px;
   font-size: 40px;
   margin: 0 5px;
 }
@@ -53,7 +61,7 @@
 }
 
 .song-progress-container {
-  margin-top: -10px;
+  margin-top: -15px;
   display: flex;
   justify-content: center;
 }

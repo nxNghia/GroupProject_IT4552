@@ -2,7 +2,8 @@ import React, { Component, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import './style.css';
-
+import ArtWork from '../ArtWork/component';
+import { useSelector } from 'react-redux';
 // class SongControls extends Component {
 
 //   state = {
@@ -145,7 +146,12 @@ const SongControls = ({
 
     const [_timeElapsed, setTimeElapsed] = useState(timeElapsed)
     const [intervalId, setIntervalId] = useState()
-
+    const albumImage = useSelector(state => state.songsReducer.songDetails)
+    useEffect(()=>{
+        if(albumImage){
+            console.log(albumImage.album.images[0].url)
+        }
+    },[albumImage])
     useEffect(() => {
         if(!songPlaying)
         {
@@ -205,33 +211,35 @@ const SongControls = ({
  
     return (
         <div className='song-player-container'>
-
+        <ArtWork albumImage={albumImage ? albumImage.album.images[0].url : ""}></ArtWork>
         <div className='song-details'>
             <p className='song-name'>{songName}</p>
             <p className='artist-name'>{artistName}</p>
         </div>
 
-        <div className='song-controls'>
-            <div onClick={prevSong} className='reverse-song'>
-                <i className="fa fa-step-backward reverse" aria-hidden="true" />
+        <div className='song-play'>
+            <div className='song-controls'>
+                <div onClick={prevSong} className='reverse-song'>
+                    <i className="fa fa-step-backward reverse" aria-hidden="true" />
+                </div>
+
+                <div className='play-btn'>
+                    <i onClick={!songPaused ? pauseSong : resumeSong} className={"fa play-btn" + showPlay} aria-hidden="true" />
+                </div>
+
+                <div onClick={nextSong} className='next-song'>
+                    <i className="fa fa-step-forward forward" aria-hidden="true" />
+                </div>
             </div>
 
-            <div className='play-btn'>
-                <i onClick={!songPaused ? pauseSong : resumeSong} className={"fa play-btn" + showPlay} aria-hidden="true" />
-            </div>
-
-            <div onClick={nextSong} className='next-song'>
-                <i className="fa fa-step-forward forward" aria-hidden="true" />
+            <div className='song-progress-container'>
+                <p className='timer-start'>{moment().minutes(0).second(_timeElapsed).format('m:ss')}</p>
+                <div className='song-progress'>
+                    <div style={{ width: _timeElapsed * 16.5 }} className='song-expired' />
+                    </div>
+                    <p className='timer-end'>{moment().minutes(0).second(30 - _timeElapsed).format('m:ss')}</p>
             </div>
         </div>
-
-        <div className='song-progress-container'>
-            <p className='timer-start'>{moment().minutes(0).second(_timeElapsed).format('m:ss')}</p>
-            <div className='song-progress'>
-                <div style={{ width: _timeElapsed * 16.5 }} className='song-expired' />
-                </div>
-                <p className='timer-end'>{moment().minutes(0).second(30 - _timeElapsed).format('m:ss')}</p>
-            </div>
 
         </div>
     );
